@@ -5,7 +5,7 @@ from config import settings
 
 def test_connection():
     # Attempt to get the URL from settings (which should load from .env or fallback)
-    db_url = 'postgresql://neondb_owner:npg_ZRgr6LXAcE7C@ep-super-glitter-a1836gze-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+    db_url = 'postgresql://zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzneondb?sslmode=require&channel_binding=require'
     print(f"Testing connection to: {db_url}")
     
     try:
