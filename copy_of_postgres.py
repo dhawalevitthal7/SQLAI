@@ -11,7 +11,7 @@ pip install psycopg2-binary pandas sqlalchemy -q
 
 model = "gemini-2.5-flash"
 DATABASE_URL = (
-    "postgresql://neondb_owner:npg_bF0jXorLh8NM@ep-patient-feather-a1xgoy13-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+    "postgresql://neondb_owner:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/neondb?sslmode=require&channel_binding=require"
 )
 
 # postgres,mysql,tsql,bigquery,snowflake
