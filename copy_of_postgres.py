@@ -21,7 +21,7 @@ from google import genai
 from google.genai import types
 
 # client = genai.Client(api_key="AIzaSyDBnJRVwolMpxQEEsU_syZKGgWjaWEd5yw")
-client = genai.Client(api_key="AIzaSyD9qRPGKMm9orOf54ObME4UakrG_dpA0oc")
+client = genai.Client(api_key="xxxxxxxxxxxxxxxxxxxxxxxx")
 
 def gemini_call(sql_prompt,user_query=None):
   if user_query:
