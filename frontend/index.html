@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Multi-DB SQL AI Agent — Generate SQL from natural language, explore schemas, create dashboards, and optimize queries across PostgreSQL, MySQL, and Oracle.">
+  <title>SQL AI Agent — Multi-Database Intelligence Platform</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+
+<body>
+  <div class="app-layout">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+      <div class="sidebar-brand">
+        <div class="brand-icon" aria-hidden="true">⚡</div>
+        <div class="brand-text">
+          <h1>SQL AI Agent</h1>
+          <span>Multi-DB Platform</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Main</div>
+        <a class="nav-item active" data-page="connect" role="button" tabindex="0" aria-label="Connect to Database"
+          id="nav-connect">
+          <span class="nav-icon" aria-hidden="true">🔌</span>
+          <span class="nav-label">Connect DB</span>
+        </a>
+        <a class="nav-item" data-page="schema" role="button" tabindex="0" aria-label="Schema Explorer" id="nav-schema">
+          <span class="nav-icon" aria-hidden="true">📊</span>
+          <span class="nav-label">Schema Explorer</span>
+        </a>
+        <a class="nav-item" data-page="query" role="button" tabindex="0" aria-label="AI Query" id="nav-query">
+          <span class="nav-icon" aria-hidden="true">🤖</span>
+          <span class="nav-label">AI Query</span>
+        </a>
+        <div class="nav-section-label">Analytics</div>
+        <a class="nav-item" data-page="dashboard" role="button" tabindex="0" aria-label="Auto Dashboard"
+          id="nav-dashboard">
+          <span class="nav-icon" aria-hidden="true">📈</span>
+          <span class="nav-label">Auto Dashboard</span>
+        </a>
+        <a class="nav-item" data-page="optimizer" role="button" tabindex="0" aria-label="SQL Optimizer"
+          id="nav-optimizer">
+          <span class="nav-icon" aria-hidden="true">⚙️</span>
+          <span class="nav-label">SQL Optimizer</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+          <span id="toggleIcon">◀</span>
+          <span class="nav-label">Collapse</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Mobile overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+
+      <!-- Header -->
+      <header class="header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">☰</button>
+          <h2 class="header-title" id="headerTitle">Connect Database</h2>
+        </div>
+        <div class="header-right">
+          <span class="dialect-badge hidden" id="dialectBadge"></span>
+          <span class="status-chip disconnected" id="statusChip">
+            <span class="status-dot"></span>
+            <span id="statusText">Disconnected</span>
+          </span>
+          <div class="safe-mode-toggle">
+            <span>Safe</span>
+            <div class="toggle-switch active" id="safeModeToggle" role="switch" aria-checked="true"
+              aria-label="Safe mode toggle" tabindex="0"></div>
+          </div>
+          <button class="theme-btn" id="themeToggle" aria-label="Toggle theme">🌙</button>
+        </div>
+      </header>
+
+      <!-- Page Area -->
+      <div class="page-area">
+
+        <!-- ===== CONNECT PAGE ===== -->
+        <section class="page active" id="page-connect" role="main" aria-label="Database connection">
+          <div class="connect-page">
+            <div class="card connect-card card-flat">
+              <div class="card-icon" aria-hidden="true">🗄️</div>
+              <h3>Connect to Your Database</h3>
+              <p>Enter a connection string to start exploring your data with AI-powered intelligence.</p>
+              <div class="connect-form">
+                <div class="input-group">
+                  <label for="dbUrlInput">Database Connection URL</label>
+                  <input type="text" class="input-field mono" id="dbUrlInput"
+                    placeholder="postgresql://user:pass@host:5432/dbname" aria-label="Database connection URL"
+                    autocomplete="off" spellcheck="false">
+                </div>
+                <button class="btn btn-primary w-full" id="connectBtn" aria-label="Connect to database">
+                  <span>🔗</span> Connect
+                </button>
+                <div class="connection-presets">
+                  <button class="preset-btn" data-preset="postgresql://"
+                    aria-label="PostgreSQL preset">PostgreSQL</button>
+                  <button class="preset-btn" data-preset="mysql://" aria-label="MySQL preset">MySQL</button>
+                  <button class="preset-btn" data-preset="oracle://" aria-label="Oracle preset">Oracle</button>
+                </div>
+              </div>
+              <div class="connecting-animation" id="connectingAnim" aria-live="polite">
+                <div class="spinner"></div>
+                <span class="connecting-text">Connecting to database…</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SCHEMA EXPLORER PAGE ===== -->
+        <section class="page" id="page-schema" role="main" aria-label="Schema explorer">
+          <div class="page-header">
+            <h2>Schema Explorer</h2>
+            <p>Browse tables, columns, and preview data from your connected database.</p>
+          </div>
+          <div id="schemaContent">
+            <div class="empty-state" id="schemaEmpty">
+              <div class="empty-icon">📊</div>
+              <h3>No Database Connected</h3>
+              <p>Connect to a database first to explore its schema.</p>
+            </div>
+            <div class="schema-grid hidden" id="schemaGrid">
+              <div class="card card-flat">
+                <h4
+                  style="font-size:13px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">
+                  Tables</h4>
+                <div class="schema-sidebar-list" id="schemaTablesList"></div>
+              </div>
+              <div class="card card-flat schema-detail-view" id="schemaDetailView">
+                <div class="empty-state">
+                  <div class="empty-icon">👈</div>
+                  <h3>Select a Table</h3>
+                  <p>Click a table from the list to view its details.</p>
+                </div>
+              </div>
+            </div>
+            <!-- Skeleton loader for schema -->
+            <div class="hidden" id="schemaSkeleton">
+              <div class="schema-grid">
+                <div class="card card-flat">
+                  <div class="skeleton skeleton-text" style="width:60%"></div>
+                  <div class="skeleton skeleton-text" style="margin-top:16px"></div>
+                  <div class="skeleton skeleton-text"></div>
+                  <div class="skeleton skeleton-text"></div>
+                  <div class="skeleton skeleton-text" style="width:70%"></div>
+                  <div class="skeleton skeleton-text"></div>
+                  <div class="skeleton skeleton-text" style="width:50%"></div>
+                </div>
+                <div class="card card-flat">
+                  <div class="skeleton skeleton-block"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== AI QUERY PAGE ===== -->
+        <section class="page" id="page-query" role="main" aria-label="AI Query">
+          <div class="page-header">
+            <h2>AI Query</h2>
+            <p>Ask questions in natural language and get SQL queries, data, and visualizations.</p>
+          </div>
+
+          <div class="ai-query-input-area">
+            <div class="ai-input-wrapper">
+              <textarea class="ai-input" id="aiQueryInput"
+                placeholder="Ask anything about your data… e.g. 'Show me the top 10 customers by revenue this year'"
+                rows="2" aria-label="Natural language query input"></textarea>
+              <button class="ai-send-btn" id="aiSendBtn" aria-label="Send query">
+                ▶
+              </button>
+            </div>
+          </div>
+
+          <!-- AI Thinking state -->
+          <div class="ai-thinking" id="aiThinking" aria-live="polite">
+            <div class="thinking-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <span class="thinking-text">AI is analyzing your query…</span>
+            <span class="retry-indicator hidden" id="retryIndicator">🔄 Self-healing retry</span>
+          </div>
+
+          <!-- Results Area -->
+          <div class="results-area hidden" id="resultsArea">
+            <!-- Generated SQL -->
+            <div class="card card-flat mb-lg" id="sqlResultCard">
+              <div class="flex items-center justify-between mb-md">
+                <h4 style="font-size:14px;font-weight:700;">Generated SQL</h4>
+                <button class="btn btn-ghost btn-sm" id="copySqlBtn" aria-label="Copy SQL">
+                  📋 Copy
+                </button>
+              </div>
+              <div class="sql-block">
+                <pre id="sqlOutput"></pre>
+              </div>
+            </div>
+
+            <!-- Tabs for results -->
+            <div class="tabs" role="tablist" aria-label="Result tabs">
+              <button class="tab-btn active" data-tab="table-tab" role="tab" aria-selected="true"
+                aria-controls="table-tab">📋 Table</button>
+              <button class="tab-btn" data-tab="charts-tab" role="tab" aria-selected="false"
+                aria-controls="charts-tab">📊 Charts</button>
+              <button class="tab-btn" data-tab="csv-tab" role="tab" aria-selected="false" aria-controls="csv-tab">📄
+                CSV</button>
+            </div>
+
+            <!-- Tab: Table -->
+            <div class="tab-content active" id="table-tab" role="tabpanel">
+              <div class="data-table-wrapper" id="dataTableWrapper">
+                <table class="data-table" id="dataTable" aria-label="Query results"></table>
+              </div>
+            </div>
+
+            <!-- Tab: Charts -->
+            <div class="tab-content" id="charts-tab" role="tabpanel">
+              <div class="charts-grid" id="chartsGrid"></div>
+              <div class="empty-state hidden" id="chartsEmpty">
+                <div class="empty-icon">📊</div>
+                <h3>No Charts Generated</h3>
+                <p>The AI couldn't generate visualizations for this query.</p>
+              </div>
+            </div>
+
+            <!-- Tab: CSV -->
+            <div class="tab-content" id="csv-tab" role="tabpanel">
+              <div class="flex items-center gap-md mb-lg">
+                <button class="btn btn-success" id="downloadCsvBtn" aria-label="Download CSV">
+                  ⬇️ Download CSV
+                </button>
+                <span class="text-secondary" style="font-size:13px;" id="csvInfo"></span>
+              </div>
+              <div class="sql-block">
+                <pre id="csvPreview" class="csv-preview"></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Response message -->
+          <div class="hidden" id="responseMessage">
+            <div class="card card-flat" style="border-left:3px solid var(--success);">
+              <p id="responseMessageText" style="font-size:14px;color:var(--text-secondary);"></p>
+            </div>
+          </div>
+
+          <!-- Query History -->
+          <div class="history-panel" id="historyPanel">
+            <h4>🕐 Query History</h4>
+            <div class="history-list" id="historyList">
+              <div class="empty-state" style="padding:24px;">
+                <p style="font-size:13px;">No queries yet. Ask a question above!</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== AUTO DASHBOARD PAGE ===== -->
+        <section class="page" id="page-dashboard" role="main" aria-label="Auto Dashboard">
+          <div class="page-header">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2>Auto Dashboard</h2>
+                <p>AI-generated insights and visualizations from your database.</p>
+              </div>
+              <button class="btn btn-primary" id="genDashboardBtn" aria-label="Generate dashboard">
+                ✨ Generate Dashboard
+              </button>
+            </div>
+          </div>
+
+          <div id="dashboardContent">
+            <div class="empty-state" id="dashboardEmpty">
+              <div class="empty-icon">📈</div>
+              <h3>No Dashboard Yet</h3>
+              <p>Connect to a database and click "Generate Dashboard" to create AI-powered insights.</p>
+            </div>
+            <!-- Dashboard skeleton -->
+            <div class="hidden" id="dashboardSkeleton">
+              <div class="dashboard-grid">
+                <div class="card card-flat">
+                  <div class="skeleton skeleton-text" style="width:60%"></div>
+                  <div class="skeleton skeleton-block" style="margin-top:12px"></div>
+                </div>
+                <div class="card card-flat">
+                  <div class="skeleton skeleton-text" style="width:50%"></div>
+                  <div class="skeleton skeleton-block" style="margin-top:12px"></div>
+                </div>
+                <div class="card card-flat">
+                  <div class="skeleton skeleton-text" style="width:70%"></div>
+                  <div class="skeleton skeleton-block" style="margin-top:12px"></div>
+                </div>
+                <div class="card card-flat">
+                  <div class="skeleton skeleton-text" style="width:45%"></div>
+                  <div class="skeleton skeleton-block" style="margin-top:12px"></div>
+                </div>
+                <div class="card card-flat">
+                  <div class="skeleton skeleton-text" style="width:55%"></div>
+                  <div class="skeleton skeleton-block" style="margin-top:12px"></div>
+                </div>
+              </div>
+            </div>
+            <div class="dashboard-grid hidden" id="dashboardGrid"></div>
+          </div>
+        </section>
+
+        <!-- ===== SQL OPTIMIZER PAGE ===== -->
+        <section class="page" id="page-optimizer" role="main" aria-label="SQL Optimizer">
+          <div class="page-header">
+            <h2>SQL Optimizer</h2>
+            <p>Paste your SQL query to get AI-powered optimization, analysis, and performance scoring.</p>
+          </div>
+
+          <div class="card card-flat mb-lg">
+            <div class="flex items-center justify-between mb-md">
+              <h4 style="font-size:14px;font-weight:700;">Input SQL Query</h4>
+              <button class="btn btn-primary" id="optimizeBtn" aria-label="Optimize SQL">
+                ⚡ Optimize
+              </button>
+            </div>
+            <textarea class="editor-area" id="optimizerInput"
+              placeholder="Paste your SQL query here...&#10;&#10;SELECT * FROM users WHERE created_at > '2024-01-01'"
+              aria-label="SQL query to optimize"></textarea>
+          </div>
+
+          <!-- Optimizer Results -->
+          <div class="hidden" id="optimizerResults">
+            <!-- Performance Score -->
+            <div class="perf-score-container">
+              <div class="perf-score-label">
+                <span>Optimization Score</span>
+                <span id="perfScoreValue">0%</span>
+              </div>
+              <div class="perf-score-bar">
+                <div class="perf-score-fill" id="perfScoreFill" style="width:0%"></div>
+              </div>
+            </div>
+
+            <!-- Side by side comparison -->
+            <div class="optimizer-layout">
+              <div class="optimizer-panel">
+                <h4>📝 Original Query</h4>
+                <div class="sql-block">
+                  <pre id="origQueryDisplay"></pre>
+                </div>
+              </div>
+              <div class="optimizer-panel">
+                <h4>✨ Optimized Query
+                  <button class="btn btn-ghost btn-sm" id="copyOptimizedBtn" aria-label="Copy optimized SQL"
+                    style="margin-left:auto;">📋 Copy</button>
+                </h4>
+                <div class="sql-block">
+                  <pre id="optQueryDisplay"></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Explanation Panel -->
+            <div class="explanation-panel">
+              <h4>💡 Analysis & Explanation</h4>
+              <div class="explanation-content" id="explanationContent"></div>
+            </div>
+          </div>
+
+          <!-- Optimizer skeleton -->
+          <div class="hidden" id="optimizerSkeleton">
+            <div class="perf-score-container">
+              <div class="skeleton skeleton-text" style="width:30%"></div>
+              <div class="skeleton" style="height:8px;margin-top:8px;"></div>
+            </div>
+            <div class="optimizer-layout mt-lg">
+              <div class="card card-flat">
+                <div class="skeleton skeleton-block"></div>
+              </div>
+              <div class="card card-flat">
+                <div class="skeleton skeleton-block"></div>
+              </div>
+            </div>
+            <div class="card card-flat mt-lg">
+              <div class="skeleton skeleton-text"></div>
+              <div class="skeleton skeleton-text"></div>
+              <div class="skeleton skeleton-text" style="width:70%"></div>
+            </div>
+          </div>
+        </section>
+
+      </div> <!-- /page-area -->
+    </main>
+  </div> <!-- /app-layout -->
+
+  <!-- ===== CHART FULLSCREEN MODAL ===== -->
+  <div class="modal-overlay" id="chartModal" aria-hidden="true" role="dialog" aria-label="Fullscreen chart">
+    <div class="modal" style="max-width:80vw;">
+      <div class="modal-header">
+        <h3 id="chartModalTitle">Chart</h3>
+        <div class="modal-actions">
+          <button class="btn btn-ghost btn-sm" id="chartNewTabBtn" title="Open in new tab">↗ New Tab</button>
+          <button class="modal-close" id="chartModalClose" aria-label="Close modal">✕</button>
+        </div>
+      </div>
+      <div id="chartModalBody" style="text-align:center;">
+        <img id="chartModalImg" src="" alt="Chart" style="max-width:100%;border-radius:var(--radius-md);">
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOAST CONTAINER ===== -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+# Python virtual environment
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyc
+*.pyd
+
+# Environment variables — NEVER commit secrets
+.env
+
+# macOS archive metadata (from zip extraction)
+__MACOSX/
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+*.egg
+
+# IDE & OS
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Test artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Temporary visualization files
+*.png
+*.jpg
