@@ -7,6 +7,7 @@
     'use strict';
 
     // ===== CONFIG =====
+    
     const API_BASE = window.location.origin;
     const TOAST_DURATION = 4000;
 
